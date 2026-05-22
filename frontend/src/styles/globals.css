@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────
+   Design tokens · Apple-style premium
+   Light is the default; [data-theme="dark"] overrides.
+   ────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #fbfbfd;
+  --surface: #ffffff;
+  --surface-2: #f5f5f7;
+  --surface-3: #ebebef;
+
+  --text: #1d1d1f;
+  --text-2: #424245;
+  --text-muted: #6e6e73;
+  --text-faint: #86868b;
+
+  --border: #d2d2d7;
+  --border-soft: #e5e5ea;
+  --border-strong: #a1a1a6;
+
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-soft: rgba(0, 113, 227, 0.08);
+  --accent-ring: rgba(0, 113, 227, 0.25);
+
+  --success: #1d8348;
+  --success-bg: rgba(29, 131, 72, 0.08);
+  --danger: #d70015;
+  --danger-bg: rgba(215, 0, 21, 0.08);
+  --warning: #b25000;
+  --warning-bg: rgba(178, 80, 0, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+
+  --nav-bg: rgba(251, 251, 253, 0.72);
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #161618;
+  --surface-2: #1d1d1f;
+  --surface-3: #2c2c2e;
+
+  --text: #f5f5f7;
+  --text-2: #d2d2d7;
+  --text-muted: #a1a1a6;
+  --text-faint: #6e6e73;
+
+  --border: #3a3a3c;
+  --border-soft: #2c2c2e;
+  --border-strong: #545458;
+
+  --accent: #2997ff;
+  --accent-hover: #43a1ff;
+  --accent-soft: rgba(41, 151, 255, 0.14);
+  --accent-ring: rgba(41, 151, 255, 0.4);
+
+  --success: #30d158;
+  --success-bg: rgba(48, 209, 88, 0.14);
+  --danger: #ff453a;
+  --danger-bg: rgba(255, 69, 58, 0.14);
+  --warning: #ff9f0a;
+  --warning-bg: rgba(255, 159, 10, 0.14);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  --nav-bg: rgba(22, 22, 24, 0.72);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Base
+   ────────────────────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'SF Pro Text',
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  font-feature-settings: 'cv11', 'ss01';
+  letter-spacing: -0.01em;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Apple-style headline scale */
+h1,
+.h1 {
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+h2,
+.h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+h3,
+.h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+}
+
+.container-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 768px) {
+  .container-page {
+    padding: 0 20px;
+  }
+}
+
+/* Eyebrow / over-line label */
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Subtle hairline divider */
+.hairline {
+  height: 1px;
+  background: var(--border-soft);
+  margin: 32px 0;
+}

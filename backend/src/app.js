@@ -48,6 +48,10 @@ app.use(
 app.use('/api/', rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
 app.use('/api/auth/', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
+app.get('/', (_, res) =>
+  res.status(200).send('TechKart API is running. Try /api/health or /api/products.')
+);
+
 app.use('/api/auth', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/cart', cartRouter);

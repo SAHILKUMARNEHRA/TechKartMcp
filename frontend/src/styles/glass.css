@@ -1,0 +1,179 @@
+/* ──────────────────────────────────────────────────────────
+   Reusable surface + control styles
+   (Class names kept stable from earlier glass-* aesthetic so
+   existing JSX renders cleanly under the new Apple-style system.)
+   ────────────────────────────────────────────────────────── */
+
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.glass-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border);
+}
+
+.glass-nav {
+  background: var(--nav-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.glass-input {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  width: 100%;
+  font-size: 15px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.glass-input::placeholder {
+  color: var(--text-faint);
+}
+.glass-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-ring);
+}
+.glass-input:disabled {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.glass-button-primary {
+  background: var(--accent);
+  color: #ffffff;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 11px 22px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.glass-button-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.glass-button-primary:active {
+  transform: scale(0.98);
+}
+.glass-button-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-button-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 10px 20px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.glass-button-ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+.glass-button-ghost:active {
+  transform: scale(0.98);
+}
+
+/* Subtle text-only button */
+.text-link {
+  color: var(--accent);
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+.text-link:hover {
+  opacity: 0.75;
+}
+
+/* Headline emphasis (used by hero) */
+.gradient-text {
+  color: var(--text);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: inherit;
+  background-clip: initial;
+}
+
+/* Discount / status badges */
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: var(--radius-xs);
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.badge-featured {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius-xs);
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-soft);
+  margin: 20px 0;
+}
+
+/* Tag chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+.chip:hover {
+  background: var(--surface-3);
+}
+.chip-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-ring);
+}

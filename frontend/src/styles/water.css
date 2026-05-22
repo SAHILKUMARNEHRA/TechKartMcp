@@ -1,0 +1,129 @@
+/* ──────────────────────────────────────────────────────────
+   Motion utilities (skeleton, card reveal, agent pulse).
+   The old "water" gradient bg is intentionally retired — Apple
+   style favours calm solid backgrounds. .water-bg now just
+   resolves to the page surface so existing JSX keeps working.
+   ────────────────────────────────────────────────────────── */
+
+.water-bg {
+  background: var(--bg);
+}
+
+/* Ripple button effect, subtle in light theme */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-btn .ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  transform: scale(0);
+  animation: rippleExpand 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+}
+[data-theme="dark"] .ripple-btn .ripple-wave {
+  background: rgba(255, 255, 255, 0.12);
+}
+@keyframes rippleExpand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Loading shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -800px 0;
+  }
+  100% {
+    background-position: 800px 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 0%,
+    var(--surface-3) 50%,
+    var(--surface-2) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: var(--radius-md);
+}
+
+/* Card reveal stagger */
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card-reveal {
+  animation: cardReveal 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.card-reveal:nth-child(1) { animation-delay: 0ms; }
+.card-reveal:nth-child(2) { animation-delay: 60ms; }
+.card-reveal:nth-child(3) { animation-delay: 120ms; }
+.card-reveal:nth-child(4) { animation-delay: 180ms; }
+.card-reveal:nth-child(5) { animation-delay: 240ms; }
+.card-reveal:nth-child(6) { animation-delay: 300ms; }
+.card-reveal:nth-child(7) { animation-delay: 360ms; }
+.card-reveal:nth-child(8) { animation-delay: 420ms; }
+
+/* Agent button breathing pulse */
+@keyframes agentPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 var(--accent-ring),
+      0 6px 18px rgba(0, 113, 227, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(0, 113, 227, 0),
+      0 6px 18px rgba(0, 113, 227, 0.5);
+  }
+}
+.agent-pulse {
+  animation: agentPulse 2.6s ease-out infinite;
+}
+
+/* Float */
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.float-y {
+  animation: floatY 5s ease-in-out infinite;
+}
+
+/* Page transition fade-in */
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-fade {
+  animation: pageFade 0.4s ease-out both;
+}
+
+/* Wave SVG retained for compatibility (footer) — invisible by default */
+.wave-svg {
+  opacity: 0;
+}
