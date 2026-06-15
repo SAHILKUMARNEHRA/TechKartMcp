@@ -22,7 +22,7 @@ export default function CompareBar() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', damping: 18 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[min(94vw,860px)]"
+          className="fixed bottom-6 inset-x-0 mx-auto z-40 w-[min(94vw,860px)]"
         >
           <div className="glass-card !shadow-lg px-3 sm:px-4 py-3 flex items-center gap-3">
             <div className="flex items-center gap-2 text-sm font-medium text-accent flex-shrink-0">

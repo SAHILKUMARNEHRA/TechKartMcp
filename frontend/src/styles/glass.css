@@ -30,6 +30,66 @@
   }
 }
 
+/* ──────────────────────────────────────────────────────────
+   Liquid Glass — Apple-style translucent lens (floating nav bar)
+   ────────────────────────────────────────────────────────── */
+.liquid-glass {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.42) 100%
+  );
+  backdrop-filter: blur(22px) saturate(190%);
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 8px 28px -12px rgba(0, 0, 0, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -8px 18px -10px rgba(255, 255, 255, 0.4);
+  transition: box-shadow 0.3s var(--ease-out), background 0.3s ease;
+}
+/* Specular highlight that gives the "liquid lens" sheen */
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    130% 90% at 12% -20%,
+    rgba(255, 255, 255, 0.55) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+.liquid-glass.is-scrolled {
+  box-shadow:
+    0 14px 38px -12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -8px 18px -10px rgba(255, 255, 255, 0.4);
+}
+[data-theme="dark"] .liquid-glass {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 50, 58, 0.55) 0%,
+    rgba(26, 28, 32, 0.4) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 12px 34px -12px rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -10px 22px -12px rgba(255, 255, 255, 0.06);
+}
+[data-theme="dark"] .liquid-glass::before {
+  background: radial-gradient(
+    130% 90% at 12% -20%,
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 55%
+  );
+}
+
 .glass-nav {
   background: var(--nav-bg);
   backdrop-filter: saturate(180%) blur(28px);
