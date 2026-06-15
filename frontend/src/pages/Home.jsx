@@ -95,7 +95,7 @@ export default function Home() {
       </section>
 
       {/* Category strip */}
-      <section className="container-page pb-20">
+      <section className="container-page pt-12 pb-16">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {CATEGORIES.map((c, i) => {
             const Icon = c.icon;
@@ -123,7 +123,7 @@ export default function Home() {
       </section>
 
       {/* Featured */}
-      <section className="container-page pb-20">
+      <section className="container-page pb-16">
         <div className="flex items-baseline justify-between mb-8">
           <div>
             <span className="eyebrow">Top-rated this week</span>
@@ -148,7 +148,7 @@ export default function Home() {
       </section>
 
       {/* Feature trio */}
-      <section className="container-page pb-24">
+      <section className="container-page pb-20">
         <div className="grid md:grid-cols-3 gap-4">
           <Feature
             index={0}

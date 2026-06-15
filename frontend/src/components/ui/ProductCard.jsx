@@ -58,7 +58,7 @@ export default function ProductCard({ product, index = 0 }) {
     >
       <Link
         to={`/products/${product.id}`}
-        className="group block bg-surface rounded-2xl p-2.5 border border-line-soft transition-[border-color,box-shadow] duration-300 hover:border-accent-ring hover:shadow-lg"
+        className="glass-tile group block rounded-2xl p-2.5 hover:!border-accent-ring hover:shadow-lg"
       >
         <div className="product-canvas relative w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden">
           <img

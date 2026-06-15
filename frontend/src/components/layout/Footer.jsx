@@ -3,8 +3,8 @@ import { Github, Twitter, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line-soft mt-28">
-      <div className="container-page py-14 grid gap-10 md:grid-cols-5">
+    <footer className="border-t border-line-soft mt-10">
+      <div className="container-page py-12 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-2 flex flex-col gap-4">
           <Link to="/" className="text-base font-semibold tracking-tight">
             TechKart
