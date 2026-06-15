@@ -1193,5 +1193,29 @@ export async function syncProductsFromAPI() {
       console.error(`[Sync] Failed for ${p.externalId}:`, e.message);
     }
   }
+  // Remove legacy/junk products (e.g. old external-API rows with USD prices)
+  // that are no longer part of the curated catalog.
+  try {
+    const keep = SEEDED_PRODUCTS.map((p) => p.externalId);
+    const stale = await prisma.product.findMany({
+      where: { externalId: { notIn: keep } },
+      select: { id: true, title: true },
+    });
+    let removed = 0;
+    for (const s of stale) {
+      // Don't delete anything a customer actually ordered — keep order history.
+      const ordered = await prisma.orderItem.count({ where: { productId: s.id } });
+      if (ordered > 0) continue;
+      await prisma.priceHistory.deleteMany({ where: { productId: s.id } });
+      await prisma.wishlist.deleteMany({ where: { productId: s.id } });
+      await prisma.cartItem.deleteMany({ where: { productId: s.id } });
+      await prisma.product.delete({ where: { id: s.id } });
+      removed++;
+    }
+    if (removed) console.log(`[Sync] Removed ${removed} legacy products.`);
+  } catch (e) {
+    console.error('[Sync] Cleanup skipped:', e.message);
+  }
+
   console.log(`[Sync] Done. ${count}/${SEEDED_PRODUCTS.length} products in catalog.`);
 }
