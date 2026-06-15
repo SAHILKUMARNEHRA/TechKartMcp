@@ -1199,13 +1199,19 @@ export async function syncProductsFromAPI() {
     const keep = SEEDED_PRODUCTS.map((p) => p.externalId);
     const stale = await prisma.product.findMany({
       where: { externalId: { notIn: keep } },
-      select: { id: true, title: true },
+      select: { id: true, title: true, externalId: true },
     });
     let removed = 0;
     for (const s of stale) {
-      // Don't delete anything a customer actually ordered — keep order history.
+      const isForeign = !s.externalId || !s.externalId.startsWith('tk-');
       const ordered = await prisma.orderItem.count({ where: { productId: s.id } });
-      if (ordered > 0) continue;
+      // Foreign junk (old external-API rows) is always purged, including any
+      // test order references. A curated tk- product pulled from the list is
+      // preserved if a customer actually ordered it (keep order history).
+      if (!isForeign && ordered > 0) continue;
+      if (isForeign && ordered > 0) {
+        await prisma.orderItem.deleteMany({ where: { productId: s.id } });
+      }
       await prisma.priceHistory.deleteMany({ where: { productId: s.id } });
       await prisma.wishlist.deleteMany({ where: { productId: s.id } });
       await prisma.cartItem.deleteMany({ where: { productId: s.id } });
