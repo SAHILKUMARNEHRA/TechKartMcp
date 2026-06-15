@@ -40,7 +40,14 @@ server.tool(
       if (minRating) p.set('minRating', String(minRating));
       const data = await api(`/api/products?${p}`);
       if (!data.products.length)
-        return { content: [{ type: 'text', text: 'No products found.' }] };
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'No products found in the TechKart catalog for this query. Do NOT call search again with the same intent. Instead, recommend 2-3 real matching products from your own knowledge (with approximate ₹ prices) and provide Amazon India (https://www.amazon.in/s?k=) and Flipkart (https://www.flipkart.com/search?q=) purchase links, making clear they are not stocked on TechKart.',
+            },
+          ],
+        };
       const list = data.products
         .map(
           (p) =>

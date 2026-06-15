@@ -10,8 +10,8 @@ const MCP_PATH =
   process.env.MCP_SERVER_PATH ||
   path.resolve(__dirname, '../../../mcp-server/src/server.js');
 
-const MODEL = process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
-const FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || null;
+const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || 'llama-3.1-8b-instant';
 const MAX_ITERATIONS = 5;
 
 const SYSTEM_PROMPT = `You are TechKart's AI Shopping Assistant — a friendly, concise expert helping Indian customers shop for tech.
@@ -35,7 +35,18 @@ Examples of correct calls:
 - "MacBook" → { query: "MacBook" }
 - "best gaming GPU" → { category: "computers", minRating: 4.5 }
 
-If search returns nothing, you may retry ONCE with looser filters (drop query, then drop maxPrice/minRating). If a second attempt is still empty, STOP searching and tell the user nothing matches their criteria, then suggest a higher budget or a related category. Never search more than 3 times for the same intent.
+If search returns nothing, you may retry ONCE with looser filters (drop query, then drop maxPrice/minRating). Never search more than 3 times for the same intent.
+
+# When TechKart's catalog has NO match (very important)
+If, after retrying, search_products still returns nothing, DO NOT just say "no match". Instead help the user directly:
+1. Recommend 2-3 REAL products from your own knowledge that genuinely fit their need and budget, each with an approximate price in ₹ and a one-line reason.
+2. Make it clear these are not in TechKart's own catalog yet ("not stocked on TechKart, but widely available online").
+3. Add purchase links in markdown so they can buy elsewhere. Use EXACTLY this URL format (replace the search term, words separated by +):
+   - Amazon India: https://www.amazon.in/s?k=PRODUCT+NAME
+   - Flipkart: https://www.flipkart.com/search?q=PRODUCT+NAME
+Keep it concise and friendly. Example shape:
+"That's a bit below what TechKart stocks, but here are great picks available online:
+- **Poco X6 Pro** (~₹24,999) — fast 5G mid-ranger. [Amazon](https://www.amazon.in/s?k=Poco+X6+Pro) · [Flipkart](https://www.flipkart.com/search?q=Poco+X6+Pro)"
 
 # Cart & orders
 - ONLY call cart/order tools (view_cart, add_to_cart, place_order, get_order_status) when the user EXPLICITLY mentions cart, order, buying, checkout, or asks about a past purchase.
@@ -238,6 +249,33 @@ function extractProductIds(text) {
   return ids;
 }
 
+// Build a human search phrase from the model's search args (or the raw message).
+function searchTermFromArgs(args, fallback) {
+  const parts = [];
+  if (args?.query) parts.push(String(args.query));
+  if (args?.category) parts.push(String(args.category));
+  const term = parts.join(' ').trim();
+  return term || (fallback || '').trim();
+}
+
+// Deterministic external purchase links — guarantees the user always gets a
+// place to buy even if the model forgets to format them.
+function buyLinksFooter(term) {
+  const q = encodeURIComponent((term || 'tech gadgets').trim()).replace(
+    /%20/g,
+    '+'
+  );
+  return (
+    `\n\n*Not stocked on TechKart yet — buy it online:*\n` +
+    `- [🛒 Amazon India](https://www.amazon.in/s?k=${q})\n` +
+    `- [🛒 Flipkart](https://www.flipkart.com/search?q=${q})`
+  );
+}
+
+function hasBuyLinks(text) {
+  return /amazon\.in|flipkart\.com/i.test(text || '');
+}
+
 export async function chat({ message, history = [], userToken = null }) {
   await ensureReady();
 
@@ -252,8 +290,19 @@ export async function chat({ message, history = [], userToken = null }) {
 
   const collectedIds = [];
   let lastSearchOrCompare = null;
+  let searchAttempted = false;
+  let searchTerm = '';
 
   let lastAssistantContent = '';
+
+  // When the catalog returned nothing for a genuine product search, make sure
+  // the user still gets purchase links even if the model didn't add them.
+  const withFallback = (replyText, ids) => {
+    if (searchAttempted && ids.length === 0 && !hasBuyLinks(replyText)) {
+      return replyText + buyLinksFooter(searchTerm || message);
+    }
+    return replyText;
+  };
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     // On the final iteration, force a text response (no more tools).
@@ -285,7 +334,10 @@ export async function chat({ message, history = [], userToken = null }) {
     if (!msg.tool_calls || msg.tool_calls.length === 0) {
       const ids = [...new Set(collectedIds)];
       return {
-        reply: cleanReply(msg.content || lastAssistantContent, ids.length),
+        reply: withFallback(
+          cleanReply(msg.content || lastAssistantContent, ids.length),
+          ids
+        ),
         productIds: ids,
         toolsUsed: lastSearchOrCompare,
       };
@@ -326,6 +378,10 @@ export async function chat({ message, history = [], userToken = null }) {
           const ids = extractProductIds(text);
           collectedIds.push(...ids);
           lastSearchOrCompare = tc.function.name;
+          if (tc.function.name === 'search_products') {
+            searchAttempted = true;
+            searchTerm = searchTermFromArgs(args, message);
+          }
         }
         messages.push({
           role: 'tool',
@@ -344,12 +400,15 @@ export async function chat({ message, history = [], userToken = null }) {
 
   const ids = [...new Set(collectedIds)];
   return {
-    reply: cleanReply(
-      lastAssistantContent ||
-        (ids.length
-          ? 'Here are the closest matches I found.'
-          : "I couldn't find anything matching that — try a higher budget or a different category."),
-      ids.length
+    reply: withFallback(
+      cleanReply(
+        lastAssistantContent ||
+          (ids.length
+            ? 'Here are the closest matches I found.'
+            : "I couldn't find that in TechKart's catalog — here's where to buy it online."),
+        ids.length
+      ),
+      ids
     ),
     productIds: ids,
     toolsUsed: lastSearchOrCompare,

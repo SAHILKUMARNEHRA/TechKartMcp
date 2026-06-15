@@ -8,6 +8,51 @@ import { useCart } from '../../context/CartContext.jsx';
 import api from '../../services/api.js';
 import { formatINR } from '../ui/ProductCard.jsx';
 
+// Minimal, safe inline markdown: **bold**, [label](url) links and line breaks.
+// Avoids pulling in a markdown dependency for the few constructs the agent uses.
+function RichText({ text }) {
+  const lines = String(text || '').split('\n');
+  const renderInline = (line, keyPrefix) => {
+    const nodes = [];
+    const re = /\*\*(.+?)\*\*|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    let last = 0;
+    let m;
+    let idx = 0;
+    while ((m = re.exec(line)) !== null) {
+      if (m.index > last) nodes.push(line.slice(last, m.index));
+      if (m[1] !== undefined) {
+        nodes.push(<strong key={`${keyPrefix}-b${idx}`}>{m[1]}</strong>);
+      } else {
+        nodes.push(
+          <a
+            key={`${keyPrefix}-a${idx}`}
+            href={m[3]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline underline-offset-2 hover:opacity-80 break-all"
+          >
+            {m[2]}
+          </a>
+        );
+      }
+      last = re.lastIndex;
+      idx++;
+    }
+    if (last < line.length) nodes.push(line.slice(last));
+    return nodes;
+  };
+  return (
+    <>
+      {lines.map((line, i) => (
+        <span key={i}>
+          {renderInline(line, i)}
+          {i < lines.length - 1 && <br />}
+        </span>
+      ))}
+    </>
+  );
+}
+
 const QUICK_PROMPTS = [
   'Find me a laptop under ₹1,50,000',
   'Show top-rated headphones',
@@ -123,7 +168,7 @@ export default function AgentPanel() {
                     <Sparkles size={12} className="text-accent" />
                   </div>
                   <div className="text-xs text-faint">
-                    Groq · Llama 3.3 70B · MCP
+                    Groq · Llama 3.3 70B · MCP-powered
                   </div>
                 </div>
               </div>
@@ -164,7 +209,11 @@ export default function AgentPanel() {
                           : 'bg-surface-2 border border-line-soft rounded-bl-md'
                     }`}
                   >
-                    {m.content}
+                    {m.role === 'assistant' ? (
+                      <RichText text={m.content} />
+                    ) : (
+                      m.content
+                    )}
                   </div>
                   {m.products && m.products.length > 0 && (
                     <div className="flex flex-col gap-2 w-full">
