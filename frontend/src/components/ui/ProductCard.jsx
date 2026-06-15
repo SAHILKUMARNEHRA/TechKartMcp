@@ -50,7 +50,9 @@ export default function ProductCard({ product, index = 0 }) {
 
   return (
     <motion.div
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.985 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 22 }}
       className="card-reveal"
       style={{ animationDelay: `${index * 40}ms` }}
     >

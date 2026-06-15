@@ -8,6 +8,18 @@ export default defineConfig({
     host: true,
   },
   build: {
-    sourcemap: true,
+    // Source maps off in prod keeps the deployed bundle lean.
+    sourcemap: false,
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        // Split heavy vendors into their own cacheable chunks.
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'motion': ['framer-motion'],
+          'charts': ['recharts'],
+        },
+      },
+    },
   },
 });

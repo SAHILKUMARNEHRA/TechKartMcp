@@ -217,9 +217,12 @@ export default function AgentPanel() {
                   </div>
                   {m.products && m.products.length > 0 && (
                     <div className="flex flex-col gap-2 w-full">
-                      {m.products.slice(0, 5).map((p) => (
-                        <div
+                      {m.products.slice(0, 5).map((p, pi) => (
+                        <motion.div
                           key={p.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: pi * 0.06, duration: 0.25 }}
                           className="glass-card p-3 flex items-center gap-3"
                         >
                           <img
@@ -241,13 +244,15 @@ export default function AgentPanel() {
                               {Number(p.rating || 0).toFixed(1)}
                             </div>
                           </div>
-                          <button
+                          <motion.button
                             onClick={() => handleAdd(p.id)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.92 }}
                             className="glass-button-primary !py-1.5 !px-3 text-xs flex items-center gap-1"
                           >
                             <ShoppingCart size={12} /> Add
-                          </button>
-                        </div>
+                          </motion.button>
+                        </motion.div>
                       ))}
                     </div>
                   )}

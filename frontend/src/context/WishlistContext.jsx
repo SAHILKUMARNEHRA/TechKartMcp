@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
 } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../services/api.js';
 import { useAuth } from './AuthContext.jsx';
@@ -13,6 +14,8 @@ const WishlistContext = createContext(null);
 
 export function WishlistProvider({ children }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +43,11 @@ export function WishlistProvider({ children }) {
 
   const toggle = async (productId, productTitle = '') => {
     if (!user) {
-      toast.error('Please login to save favorites');
+      const message = 'Please log in to save favorites';
+      toast.error(message);
+      navigate('/login', {
+        state: { from: location.pathname + location.search, message },
+      });
       return false;
     }
     try {

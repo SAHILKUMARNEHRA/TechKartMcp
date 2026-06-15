@@ -1,14 +1,22 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Zap } from 'lucide-react';
+import { Zap, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectMessage = location.state?.message;
+  const from = location.state?.from || '/';
   const [form, setForm] = useState({ email: '', password: '' });
   const [busy, setBusy] = useState(false);
+
+  // Surface the reason the user was sent here (e.g. tried to add to cart).
+  useEffect(() => {
+    if (redirectMessage) toast(redirectMessage, { icon: '🔒' });
+  }, [redirectMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +24,7 @@ export default function Login() {
     try {
       await login(form.email, form.password);
       toast.success('Welcome back!');
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Login failed');
     } finally {
@@ -36,6 +44,13 @@ export default function Login() {
           <h1 className="text-2xl font-semibold gradient-text">Welcome back</h1>
           <p className="text-sm text-muted">Sign in to your TechKart account</p>
         </div>
+
+        {redirectMessage && (
+          <div className="flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
+            <Lock size={16} className="shrink-0" />
+            <span>{redirectMessage} to continue.</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <label className="flex flex-col gap-1.5">

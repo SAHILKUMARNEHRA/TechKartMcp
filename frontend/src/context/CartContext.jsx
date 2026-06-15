@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../services/api.js';
 import { useAuth } from './AuthContext.jsx';
@@ -8,7 +9,21 @@ const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const setCartSummary = useStore((s) => s.setCartSummary);
+  const setAgentOpen = useStore((s) => s.setAgentOpen);
+
+  // Send a logged-out user to the login page with a clear reason and a path
+  // to return to after they sign in.
+  const requireLogin = (message) => {
+    toast.error(message);
+    setAgentOpen(false);
+    navigate('/login', {
+      state: { from: location.pathname + location.search, message },
+    });
+  };
+
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [itemCount, setItemCount] = useState(0);
@@ -42,7 +57,7 @@ export function CartProvider({ children }) {
 
   const addItem = async (productId, quantity = 1) => {
     if (!user) {
-      toast.error('Please login to add items to cart');
+      requireLogin('Please log in to add items to your cart');
       return false;
     }
     try {
