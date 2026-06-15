@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { X, GitCompare } from 'lucide-react';
@@ -5,6 +6,14 @@ import { useCompare } from '../../hooks/useCompare.js';
 
 export default function CompareBar() {
   const { compare, removeFromCompare, clearCompare } = useCompare();
+
+  // Reserve page space while the bar is open so it never covers the footer.
+  useEffect(() => {
+    if (compare.length > 0) document.body.setAttribute('data-compare-open', '');
+    else document.body.removeAttribute('data-compare-open');
+    return () => document.body.removeAttribute('data-compare-open');
+  }, [compare.length]);
+
   return (
     <AnimatePresence>
       {compare.length > 0 && (
@@ -13,14 +22,14 @@ export default function CompareBar() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', damping: 18 }}
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(96vw,800px)]"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[min(94vw,860px)]"
         >
-          <div className="glass-card px-4 py-3 flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-medium text-accent">
+          <div className="glass-card !shadow-lg px-3 sm:px-4 py-3 flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-accent flex-shrink-0">
               <GitCompare size={16} />
-              Compare ({compare.length}/4)
+              <span className="hidden sm:inline">Compare</span> ({compare.length}/4)
             </div>
-            <div className="flex-1 flex items-center gap-2 overflow-x-auto">
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar min-w-0">
               {compare.map((p) => (
                 <div
                   key={p.id}
@@ -29,7 +38,8 @@ export default function CompareBar() {
                   <img
                     src={p.imageUrl}
                     alt=""
-                    className="w-8 h-8 rounded object-contain bg-surface-2"
+                    referrerPolicy="no-referrer"
+                    className="w-8 h-8 rounded object-contain product-canvas"
                   />
                   <span className="max-w-[100px] truncate">{p.title}</span>
                   <button
@@ -42,7 +52,7 @@ export default function CompareBar() {
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={clearCompare}
                 className="text-xs text-muted hover:text-ink"

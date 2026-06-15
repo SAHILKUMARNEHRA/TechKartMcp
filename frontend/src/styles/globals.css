@@ -38,7 +38,7 @@
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
 
-  --nav-bg: rgba(251, 251, 253, 0.72);
+  --nav-bg: rgba(251, 251, 253, 0.6);
 
   --radius-xs: 6px;
   --radius-sm: 10px;
@@ -79,7 +79,7 @@
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
   --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
 
-  --nav-bg: rgba(22, 22, 24, 0.72);
+  --nav-bg: rgba(22, 22, 24, 0.55);
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -247,17 +247,16 @@ h3,
   height: 130%;
   z-index: 0;
   pointer-events: none;
-  filter: blur(64px);
-  opacity: 0.5;
+  filter: blur(70px);
+  opacity: 0.32;
   background:
-    radial-gradient(38% 50% at 18% 25%, var(--accent) 0%, transparent 70%),
-    radial-gradient(42% 55% at 82% 20%, var(--accent-2) 0%, transparent 70%),
-    radial-gradient(45% 50% at 60% 80%, #18c2c2 0%, transparent 72%);
-  background-size: 180% 180%;
-  animation: auroraDrift 18s var(--ease-in-out) infinite alternate;
+    radial-gradient(36% 48% at 15% 20%, var(--accent) 0%, transparent 70%),
+    radial-gradient(40% 52% at 85% 15%, var(--accent-2) 0%, transparent 70%);
+  background-size: 170% 170%;
+  animation: auroraDrift 20s var(--ease-in-out) infinite alternate;
 }
 [data-theme="dark"] .aurora {
-  opacity: 0.38;
+  opacity: 0.45;
 }
 @keyframes auroraDrift {
   0% {
@@ -306,6 +305,21 @@ h3,
 }
 .badge-pop {
   animation: badgePop 280ms var(--ease-spring) both;
+}
+
+/* Hide scrollbars on horizontal scroll strips (compare bar chips) */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* When the floating compare bar is open, reserve space so it never
+   overlaps the footer content. */
+body[data-compare-open] {
+  padding-bottom: 92px;
 }
 
 /* Soft sheen sweep on hover (cards / feature tiles) */

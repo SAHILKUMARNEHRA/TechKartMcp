@@ -58,15 +58,15 @@ export default function ProductCard({ product, index = 0 }) {
     >
       <Link
         to={`/products/${product.id}`}
-        className="group block bg-surface rounded-2xl overflow-hidden border border-line-soft transition-[border-color,box-shadow] duration-300 hover:border-accent-ring hover:shadow-lg"
+        className="group block bg-surface rounded-2xl p-2.5 border border-line-soft transition-[border-color,box-shadow] duration-300 hover:border-accent-ring hover:shadow-lg"
       >
-        <div className="product-canvas relative w-full aspect-square flex items-center justify-center overflow-hidden">
+        <div className="product-canvas relative w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden">
           <img
             src={product.imageUrl}
             alt={product.title}
             loading="lazy"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-contain p-6 transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.08]"
+            className="w-full h-full object-contain p-5 transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.08]"
             onError={(e) => {
               e.currentTarget.src =
                 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect fill="%23f5f5f7" width="200" height="200"/><text x="50%25" y="50%25" fill="%23a1a1a6" text-anchor="middle" dy=".3em" font-family="sans-serif" font-size="14">No image</text></svg>';
@@ -106,7 +106,7 @@ export default function ProductCard({ product, index = 0 }) {
           </button>
         </div>
 
-        <div className="p-4 flex flex-col gap-1.5">
+        <div className="px-1.5 pt-3.5 pb-1.5 flex flex-col gap-1.5">
           {product.brand && (
             <span className="text-[11px] uppercase tracking-wider text-faint font-medium">
               {product.brand}
