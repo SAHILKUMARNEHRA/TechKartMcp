@@ -4,12 +4,21 @@ export async function getProducts(req, res, next) {
   try {
     const { q, category, minPrice, maxPrice, minRating, sort, page = 1, limit = 20 } = req.query;
     const where = {};
-    if (q)
+    if (q) {
+      // Match generic type words (e.g. "smartphone", "headphones") as well as
+      // titles/brands by also searching category and tags. Keeps the AI agent
+      // from wrongly falling back when it searches by a type word.
+      const term = String(q).trim();
+      const tagTerm = term.toLowerCase().replace(/s$/, '');
       where.OR = [
-        { title: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-        { brand: { contains: q, mode: 'insensitive' } },
+        { title: { contains: term, mode: 'insensitive' } },
+        { description: { contains: term, mode: 'insensitive' } },
+        { brand: { contains: term, mode: 'insensitive' } },
+        { category: { contains: term, mode: 'insensitive' } },
+        { tags: { has: term.toLowerCase() } },
+        { tags: { has: tagTerm } },
       ];
+    }
     if (category) where.category = { contains: category, mode: 'insensitive' };
     if (minPrice || maxPrice)
       where.price = {
