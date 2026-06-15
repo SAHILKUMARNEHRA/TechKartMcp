@@ -127,13 +127,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 px-3 sm:px-4 pt-3 pb-1">
-      <div className="max-w-[1200px] mx-auto">
-        <div
-          className={`liquid-glass rounded-[20px] flex items-center h-14 gap-6 px-4 sm:px-5 transition-shadow duration-300 ${
-            scrolled ? 'is-scrolled' : ''
-          }`}
-        >
+    <header
+      className={`liquid-glass-bar sticky top-0 z-30 ${scrolled ? 'is-scrolled' : ''}`}
+    >
+      <div className="container-page flex items-center h-14 gap-6">
         <Link
           to="/"
           className="flex items-center gap-2 font-semibold text-base group"
@@ -335,7 +332,7 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden liquid-glass rounded-2xl mt-2 px-5 py-4 flex flex-col gap-3">
+        <div className="md:hidden border-t border-line-soft px-5 py-4 flex flex-col gap-3 bg-surface">
           <form onSubmit={handleSearch} className="relative">
             <Search
               size={14}
@@ -370,7 +367,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-      </div>
     </header>
   );
 }
