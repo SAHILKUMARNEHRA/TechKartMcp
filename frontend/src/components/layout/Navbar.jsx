@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   Heart,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
@@ -29,6 +30,15 @@ export default function Navbar() {
   const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Elevate the nav once the user scrolls past the hero edge.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Live search suggestions
   const [suggestions, setSuggestions] = useState([]);
@@ -117,9 +127,19 @@ export default function Navbar() {
   };
 
   return (
-    <header className="glass-nav sticky top-0 z-30">
+    <header
+      className={`glass-nav sticky top-0 z-30 transition-shadow duration-300 ${
+        scrolled ? 'shadow-md' : ''
+      }`}
+    >
       <div className="container-page flex items-center h-14 gap-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-base">
+        <Link
+          to="/"
+          className="flex items-center gap-2 font-semibold text-base group"
+        >
+          <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-accent-hover flex items-center justify-center text-white transition-transform duration-300 group-hover:rotate-[12deg] group-hover:scale-110">
+            <Zap size={15} className="fill-current" />
+          </span>
           <span className="font-display tracking-tight">TechKart</span>
         </Link>
 
@@ -207,7 +227,7 @@ export default function Navbar() {
             onClick={toggleTheme}
             aria-label="Toggle theme"
             title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-ink-2 hover:bg-surface-2 transition"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-ink-2 hover:bg-surface-2 transition-transform duration-300 hover:rotate-45 active:scale-90"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
@@ -228,7 +248,10 @@ export default function Navbar() {
           >
             <Heart size={16} />
             {wishlistCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[10px] font-semibold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
+              <span
+                key={wishlistCount}
+                className="badge-pop absolute -top-0.5 -right-0.5 bg-danger text-white text-[10px] font-semibold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1"
+              >
                 {wishlistCount}
               </span>
             )}
@@ -241,7 +264,10 @@ export default function Navbar() {
           >
             <ShoppingBag size={16} />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-semibold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
+              <span
+                key={cartCount}
+                className="badge-pop absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-semibold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1"
+              >
                 {cartCount}
               </span>
             )}
@@ -360,9 +386,9 @@ function DropLink({ to, icon, children, onClick }) {
 }
 
 function navLinkCls({ isActive }) {
-  return `px-3 py-1.5 rounded-md transition ${
+  return `nav-underline px-3 py-1.5 rounded-md transition-colors duration-200 ${
     isActive
-      ? 'text-ink font-medium'
+      ? 'text-ink font-medium is-active'
       : 'text-ink-2 hover:text-ink'
   }`;
 }

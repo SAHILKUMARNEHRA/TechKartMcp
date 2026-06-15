@@ -217,3 +217,135 @@ h3,
   background: var(--border-soft);
   margin: 32px 0;
 }
+
+/* ──────────────────────────────────────────────────────────
+   Motion system · strong custom easing curves
+   ────────────────────────────────────────────────────────── */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --accent-2: #6e56cf; /* violet companion to the blue accent */
+}
+[data-theme="dark"] {
+  --accent-2: #9d8bff;
+}
+
+/* Tasteful gradient headline (blue → violet, within the theme) */
+.gradient-text {
+  background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Animated aurora glow used behind the hero */
+.aurora {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 130%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(64px);
+  opacity: 0.5;
+  background:
+    radial-gradient(38% 50% at 18% 25%, var(--accent) 0%, transparent 70%),
+    radial-gradient(42% 55% at 82% 20%, var(--accent-2) 0%, transparent 70%),
+    radial-gradient(45% 50% at 60% 80%, #18c2c2 0%, transparent 72%);
+  background-size: 180% 180%;
+  animation: auroraDrift 18s var(--ease-in-out) infinite alternate;
+}
+[data-theme="dark"] .aurora {
+  opacity: 0.38;
+}
+@keyframes auroraDrift {
+  0% {
+    background-position: 0% 50%;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    background-position: 100% 50%;
+    transform: translateY(-3%) scale(1.08);
+  }
+}
+
+/* Uniform light canvas for product photos (most have white/transparent
+   backgrounds, so a light canvas keeps the grid consistent in dark mode). */
+.product-canvas {
+  background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #f3f4f7 100%);
+}
+
+/* Animated underline for nav links */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms var(--ease-out);
+}
+.nav-underline:hover::after,
+.nav-underline.is-active::after {
+  transform: scaleX(1);
+}
+
+/* Badge pop */
+@keyframes badgePop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.badge-pop {
+  animation: badgePop 280ms var(--ease-spring) both;
+}
+
+/* Soft sheen sweep on hover (cards / feature tiles) */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+  transform: skewX(-18deg);
+  transition: left 650ms var(--ease-out);
+  pointer-events: none;
+  z-index: 1;
+}
+.sheen:hover::before {
+  left: 140%;
+}
+
+/* Accessibility: respect reduced-motion — keep fades, drop large motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.08ms !important;
+    scroll-behavior: auto !important;
+  }
+  .aurora {
+    animation: none;
+  }
+}

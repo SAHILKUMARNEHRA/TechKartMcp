@@ -58,15 +58,15 @@ export default function ProductCard({ product, index = 0 }) {
     >
       <Link
         to={`/products/${product.id}`}
-        className="group block bg-surface rounded-2xl overflow-hidden transition border border-line-soft hover:border-line hover:shadow-md"
+        className="group block bg-surface rounded-2xl overflow-hidden border border-line-soft transition-[border-color,box-shadow] duration-300 hover:border-accent-ring hover:shadow-lg"
       >
-        <div className="relative w-full aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
+        <div className="product-canvas relative w-full aspect-square flex items-center justify-center overflow-hidden">
           <img
             src={product.imageUrl}
             alt={product.title}
             loading="lazy"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-contain p-6 transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.08]"
             onError={(e) => {
               e.currentTarget.src =
                 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect fill="%23f5f5f7" width="200" height="200"/><text x="50%25" y="50%25" fill="%23a1a1a6" text-anchor="middle" dy=".3em" font-family="sans-serif" font-size="14">No image</text></svg>';
@@ -83,10 +83,10 @@ export default function ProductCard({ product, index = 0 }) {
             onClick={handleWishlist}
             aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
             title={saved ? 'Remove from wishlist' : 'Save to wishlist'}
-            className={`absolute bottom-3 left-3 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition ${
+            className={`absolute bottom-3 left-3 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 ${
               saved
                 ? 'bg-danger/10 text-danger border border-danger/30'
-                : 'bg-surface/80 text-ink-2 opacity-0 group-hover:opacity-100 border border-line-soft hover:text-danger'
+                : 'bg-surface/85 text-ink-2 opacity-0 translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 border border-line-soft hover:text-danger'
             }`}
           >
             <Heart size={13} className={saved ? 'fill-current' : ''} />
@@ -96,10 +96,10 @@ export default function ProductCard({ product, index = 0 }) {
             onClick={handleCompare}
             aria-label="Compare"
             title={inCompare ? 'Remove from compare' : 'Add to compare'}
-            className={`absolute bottom-3 right-3 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition ${
+            className={`absolute bottom-3 right-3 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 ${
               inCompare
                 ? 'bg-accent text-white'
-                : 'bg-surface/80 text-ink-2 opacity-0 group-hover:opacity-100 border border-line-soft'
+                : 'bg-surface/85 text-ink-2 opacity-0 translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 border border-line-soft'
             }`}
           >
             {inCompare ? <Check size={13} /> : <GitCompare size={13} />}
@@ -135,13 +135,16 @@ export default function ProductCard({ product, index = 0 }) {
                   </span>
                 )}
             </div>
-            <button
+            <motion.button
               onClick={handleAdd}
               aria-label="Add to cart"
-              className="w-8 h-8 rounded-full bg-ink text-bg flex items-center justify-center hover:opacity-85 transition"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_4px_12px_-3px_var(--accent-ring)]"
             >
-              <ShoppingBag size={13} />
-            </button>
+              <ShoppingBag size={14} />
+            </motion.button>
           </div>
         </div>
       </Link>

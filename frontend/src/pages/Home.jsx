@@ -13,11 +13,17 @@ import {
   Tv,
   Tablet,
   Cpu,
+  Sparkles,
 } from 'lucide-react';
 import api from '../services/api.js';
 import ProductCard from '../components/ui/ProductCard.jsx';
 import { ProductGridSkeleton } from '../components/ui/LoadingSkeleton.jsx';
 import { useStore } from '../store/useStore.js';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] } },
+};
 
 const CATEGORIES = [
   { key: 'laptops', label: 'Laptops', icon: Laptop },
@@ -44,34 +50,48 @@ export default function Home() {
   return (
     <div className="bg-bg page-fade">
       {/* Hero */}
-      <section className="container-page pt-24 pb-20">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-          className="max-w-3xl"
-        >
-          <span className="eyebrow">Introducing</span>
-          <h1 className="mt-4">
-            Tech,
-            <br />
-            considered.
-          </h1>
-          <p className="mt-6 text-lg sm:text-xl text-ink-2 max-w-xl leading-relaxed">
-            A small, curated catalog of the best laptops, phones, and audio — with an AI
-            that knows when each one is the right time to buy.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link to="/products" className="glass-button-primary">
-              Shop everything
-              <ArrowRight size={16} className="ml-1" />
-            </Link>
-            <button onClick={toggleAgent} className="glass-button-ghost">
-              <Bot size={15} className="mr-1" />
-              Ask the assistant
-            </button>
-          </div>
-        </motion.div>
+      <section className="relative overflow-hidden">
+        <div className="aurora" aria-hidden="true" />
+        <div className="container-page relative pt-24 pb-20">
+          <motion.div
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+            }}
+            className="max-w-3xl"
+          >
+            <motion.span variants={fadeUp} className="eyebrow inline-flex items-center gap-1.5">
+              <Sparkles size={12} /> AI-guided tech shopping
+            </motion.span>
+            <motion.h1 variants={fadeUp} className="mt-4">
+              Tech,
+              <br />
+              <span className="gradient-text">considered.</span>
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="mt-6 text-lg sm:text-xl text-ink-2 max-w-xl leading-relaxed"
+            >
+              A curated catalog of the best laptops, phones, and audio — with an AI
+              that knows exactly when each one is the right time to buy.
+            </motion.p>
+            <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
+              <Link to="/products" className="glass-button-primary group">
+                Shop everything
+                <ArrowRight
+                  size={16}
+                  className="ml-1 transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Link>
+              <button onClick={toggleAgent} className="glass-button-ghost">
+                <Bot size={15} className="mr-1" />
+                Ask the assistant
+              </button>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Category strip */}
@@ -89,9 +109,11 @@ export default function Home() {
               >
                 <Link
                   to={`/products?category=${c.key}`}
-                  className="glass-card glass-card-interactive py-6 flex flex-col items-center gap-2.5"
+                  className="glass-card glass-card-interactive group py-6 flex flex-col items-center gap-2.5"
                 >
-                  <Icon size={20} className="text-ink-2" strokeWidth={1.6} />
+                  <span className="w-10 h-10 rounded-xl bg-accent-soft text-accent flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-accent group-hover:text-white">
+                    <Icon size={19} strokeWidth={1.7} />
+                  </span>
                   <span className="text-[13px] font-medium">{c.label}</span>
                 </Link>
               </motion.div>
@@ -129,18 +151,21 @@ export default function Home() {
       <section className="container-page pb-24">
         <div className="grid md:grid-cols-3 gap-4">
           <Feature
+            index={0}
             icon={<Bot size={20} strokeWidth={1.6} />}
             kicker="AI assistant"
             title="A real conversation."
             text="Tell our assistant what you want. It finds, compares, and even places the order — with your approval at every step."
           />
           <Feature
+            index={1}
             icon={<TrendingDown size={20} strokeWidth={1.6} />}
             kicker="Price intelligence"
             title="Buy at the right time."
             text="Every product carries a 90-day price chart so you know when today's price is actually a good one."
           />
           <Feature
+            index={2}
             icon={<GitCompare size={20} strokeWidth={1.6} />}
             kicker="Side-by-side"
             title="Compare with clarity."
@@ -163,15 +188,22 @@ export default function Home() {
   );
 }
 
-function Feature({ icon, kicker, title, text }) {
+function Feature({ icon, kicker, title, text, index = 0 }) {
   return (
-    <div className="glass-card p-7 flex flex-col gap-3">
-      <span className="w-10 h-10 rounded-full bg-accent-soft text-accent flex items-center justify-center">
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.23, 1, 0.32, 1] }}
+      whileHover={{ y: -5 }}
+      className="glass-card sheen group p-7 flex flex-col gap-3"
+    >
+      <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-accent-hover text-white flex items-center justify-center shadow-[0_6px_16px_-6px_var(--accent-ring)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
         {icon}
       </span>
-      <span className="eyebrow !text-muted !text-[11px]">{kicker}</span>
+      <span className="eyebrow !text-muted !text-[11px] mt-1">{kicker}</span>
       <h3 className="!text-[20px]">{title}</h3>
       <p className="text-sm text-muted leading-relaxed">{text}</p>
-    </div>
+    </motion.div>
   );
 }
