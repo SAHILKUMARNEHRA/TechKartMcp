@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   Search,
   ShoppingBag,
@@ -128,10 +128,12 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      className={`liquid-glass-bar sticky top-0 z-30 ${scrolled ? 'is-scrolled' : ''}`}
-    >
-      <div className="container-page flex items-center h-14 gap-6">
+    <header className="sticky top-0 z-30 px-3 sm:px-4 pt-3">
+      <div
+        className={`liquid-glass max-w-[1200px] mx-auto flex items-center h-14 gap-5 px-4 sm:px-5 rounded-[22px] ${
+          scrolled ? 'is-scrolled' : ''
+        }`}
+      >
         <Link
           to="/"
           className="flex items-center gap-2 font-semibold text-base group"
@@ -333,7 +335,7 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-line-soft px-5 py-4 flex flex-col gap-3 bg-surface">
+        <div className="md:hidden liquid-glass rounded-2xl mt-2 px-5 py-4 flex flex-col gap-3">
           <form onSubmit={handleSearch} className="relative">
             <Search
               size={14}
@@ -396,38 +398,45 @@ const NAV_ITEMS = [
   { to: '/compare', label: 'Compare' },
 ];
 
-// macOS-dock-style nav: items magnify based on proximity to the cursor.
-function DockNav() {
-  const mouseX = useMotionValue(Infinity);
-  return (
-    <nav
-      onMouseMove={(e) => mouseX.set(e.clientX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
-      className="hidden md:flex items-center gap-0.5"
-    >
-      {NAV_ITEMS.map((item) => (
-        <DockLink key={item.to} mouseX={mouseX} {...item} />
-      ))}
-    </nav>
-  );
+// Which nav item matches the current route (handles ?category= params).
+function isNavActive(item, location) {
+  const url = new URL(item.to, 'http://x');
+  if (location.pathname !== url.pathname) return false;
+  const itemCat = url.searchParams.get('category');
+  const curCat = new URLSearchParams(location.search).get('category');
+  return itemCat ? curCat === itemCat : !curCat;
 }
 
-function DockLink({ mouseX, to, label }) {
-  const ref = useRef(null);
-  const distance = useTransform(mouseX, (val) => {
-    const b = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - b.x - b.width / 2;
-  });
-  const scaleSync = useTransform(distance, [-110, 0, 110], [1, 1.22, 1]);
-  const ySync = useTransform(distance, [-110, 0, 110], [0, -2, 0]);
-  const spring = { stiffness: 350, damping: 22, mass: 0.4 };
-  const scale = useSpring(scaleSync, spring);
-  const y = useSpring(ySync, spring);
+// Apple-Music-style nav: a frosted "liquid glass" pill slides between items
+// (follows hover, rests on the active category) via a shared layout animation.
+function DockNav() {
+  const location = useLocation();
+  const [hovered, setHovered] = useState(null);
+  const activeIndex = NAV_ITEMS.findIndex((it) => isNavActive(it, location));
+  const pillIndex = hovered !== null ? hovered : activeIndex;
+
   return (
-    <motion.div ref={ref} style={{ scale, y }} className="origin-center">
-      <NavLink to={to} className={navLinkCls}>
-        {label}
-      </NavLink>
-    </motion.div>
+    <nav
+      className="hidden md:flex items-center gap-0.5"
+      onMouseLeave={() => setHovered(null)}
+    >
+      {NAV_ITEMS.map((item, i) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          onMouseEnter={() => setHovered(i)}
+          className={`nav-dock-link${i === activeIndex ? ' is-active' : ''}`}
+        >
+          {pillIndex === i && (
+            <motion.span
+              layoutId="nav-pill"
+              className="nav-dock-pill"
+              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            />
+          )}
+          <span className="relative z-10">{item.label}</span>
+        </NavLink>
+      ))}
+    </nav>
   );
 }
