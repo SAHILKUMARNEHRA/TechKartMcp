@@ -206,6 +206,14 @@ h3,
   }
 }
 
+/* Hero headline — a touch more restrained than the global h1 scale */
+.hero-title {
+  font-size: clamp(40px, 5.4vw, 62px);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+}
+
 /* Eyebrow / over-line label */
 .eyebrow {
   font-size: 12px;
@@ -265,15 +273,18 @@ h3,
   height: 130%;
   z-index: 0;
   pointer-events: none;
-  filter: blur(72px);
-  opacity: 0.5;
+  filter: blur(80px);
+  opacity: 0.6;
   background:
-    radial-gradient(34% 46% at 16% 22%, var(--accent) 0%, transparent 62%),
-    radial-gradient(36% 48% at 82% 16%, var(--accent-2) 0%, transparent 62%),
-    radial-gradient(40% 50% at 62% 72%, #18c2c2 0%, transparent 64%),
-    radial-gradient(30% 42% at 32% 82%, #ff5fa2 0%, transparent 62%);
+    radial-gradient(34% 46% at 16% 22%, var(--accent) 0%, transparent 60%),
+    radial-gradient(36% 48% at 82% 16%, var(--accent-2) 0%, transparent 60%),
+    radial-gradient(40% 50% at 62% 72%, #14b8c4 0%, transparent 62%),
+    radial-gradient(30% 42% at 30% 82%, #f472b6 0%, transparent 60%);
   background-size: 200% 200%;
   animation: auroraDrift 18s var(--ease-in-out) infinite alternate;
+  /* Soft-fade all edges so the blurred blobs never form a hard clip line */
+  -webkit-mask-image: radial-gradient(125% 100% at 50% 22%, #000 38%, transparent 80%);
+  mask-image: radial-gradient(125% 100% at 50% 22%, #000 38%, transparent 80%);
 }
 /* Second counter-moving layer for a living, "wallpaper" depth */
 .aurora::after {

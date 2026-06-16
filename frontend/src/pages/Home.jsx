@@ -65,17 +65,15 @@ export default function Home() {
             <motion.span variants={fadeUp} className="eyebrow inline-flex items-center gap-1.5">
               <Sparkles size={12} /> AI-guided tech shopping
             </motion.span>
-            <motion.h1 variants={fadeUp} className="mt-4">
-              Tech,
-              <br />
-              <span className="gradient-text">considered.</span>
+            <motion.h1 variants={fadeUp} className="mt-4 hero-title">
+              Tech, <span className="gradient-text">considered.</span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="mt-6 text-lg sm:text-xl text-ink-2 max-w-xl leading-relaxed"
+              className="mt-5 text-lg text-ink-2 max-w-md leading-relaxed"
             >
-              A curated catalog of the best laptops, phones, and audio — with an AI
-              that knows exactly when each one is the right time to buy.
+              A curated catalog of the best tech — with an AI that knows the
+              right time to buy.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
               <Link to="/products" className="glass-button-primary group">
