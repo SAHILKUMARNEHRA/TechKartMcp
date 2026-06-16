@@ -1,13 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
+import api from '../services/api.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import { formatINR } from '../components/ui/ProductCard.jsx';
+import ProductCard, { formatINR } from '../components/ui/ProductCard.jsx';
 
 export default function Cart() {
   const { items, total, itemCount, updateItem, removeItem, loading } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [recommended, setRecommended] = useState([]);
+  useEffect(() => {
+    api
+      .get('/products', { params: { sort: 'rating', limit: 8 } })
+      .then((res) => setRecommended(res.data.products || []))
+      .catch(() => {});
+  }, []);
+  const inCart = new Set(items.map((i) => i.product.id));
+  const recs = recommended.filter((p) => !inCart.has(p.id)).slice(0, 4);
 
   if (!user) {
     return (
@@ -138,6 +150,17 @@ export default function Cart() {
             </Link>
           </aside>
         </div>
+
+        {recs.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-xl font-semibold mb-6">Recommended for you</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {recs.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

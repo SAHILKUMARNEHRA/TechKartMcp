@@ -57,7 +57,7 @@ npm install
 npm run dev                # http://localhost:5173
 ```
 
-### 5. MCP Server (optional — for AI-driven ordering via Claude / Cursor / Claude Code)
+### 5. MCP Server (optional — for AI-driven ordering via any MCP-compatible client)
 
 ```bash
 cd mcp-server
@@ -66,7 +66,7 @@ npm install
 npm start                  # speaks stdio
 ```
 
-Register it in your MCP client (e.g. Claude Desktop, Claude Code) by pointing the
+Register it in your MCP client by pointing the
 `command` at `node /absolute/path/to/techkart/mcp-server/src/server.js`.
 
 ---
