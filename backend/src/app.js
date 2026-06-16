@@ -23,6 +23,8 @@ import cron from 'node-cron';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+// Behind Render's proxy — trust X-Forwarded-* so req.secure reflects HTTPS.
+app.set('trust proxy', 1);
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(

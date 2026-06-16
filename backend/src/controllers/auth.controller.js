@@ -3,24 +3,30 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../config/database.js';
 
-const isProd = process.env.NODE_ENV === 'production';
-// Frontend (Vercel) and backend (Render) live on different domains, so the
-// refresh cookie must be SameSite=None + Secure to be sent cross-site.
-// In local dev (same-origin via Vite proxy, http) fall back to Lax.
-const COOKIE_OPTS = {
-  httpOnly: true,
-  secure: isProd,
-  sameSite: isProd ? 'none' : 'lax',
-  path: '/',
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-};
-// Same attributes (minus maxAge) so clearCookie reliably matches & removes it.
-const CLEAR_OPTS = {
-  httpOnly: true,
-  secure: isProd,
-  sameSite: isProd ? 'none' : 'lax',
-  path: '/',
-};
+const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+// Frontend (Vercel) and backend (Render) live on different domains, so over
+// HTTPS the refresh cookie must be SameSite=None + Secure to be sent cross-site.
+// We detect HTTPS per-request (Render terminates TLS and forwards
+// x-forwarded-proto) rather than relying on NODE_ENV, which isn't set to
+// "production" on the host. Local dev (http, same-origin proxy) uses Lax.
+function isHttps(req) {
+  return req.secure || req.headers['x-forwarded-proto'] === 'https';
+}
+function cookieOpts(req) {
+  const https = isHttps(req);
+  return {
+    httpOnly: true,
+    secure: https,
+    sameSite: https ? 'none' : 'lax',
+    path: '/',
+    maxAge: COOKIE_MAX_AGE,
+  };
+}
+function clearOpts(req) {
+  const https = isHttps(req);
+  return { httpOnly: true, secure: https, sameSite: https ? 'none' : 'lax', path: '/' };
+}
 
 const signAccess = (id, role) =>
   jwt.sign({ sub: id, role }, process.env.JWT_SECRET, { expiresIn: '15m' });
@@ -53,7 +59,7 @@ export async function register(req, res, next) {
       select: { id: true, email: true, name: true, role: true, avatar: true },
     });
     const accessToken = signAccess(user.id, user.role);
-    res.cookie('refreshToken', await createRefresh(user.id), COOKIE_OPTS);
+    res.cookie('refreshToken', await createRefresh(user.id), cookieOpts(req));
     res.status(201).json({ accessToken, user });
   } catch (err) {
     next(err);
@@ -67,7 +73,7 @@ export async function login(req, res, next) {
     if (!user?.passwordHash || !(await bcrypt.compare(password, user.passwordHash)))
       return res.status(401).json({ error: 'Invalid credentials' });
     const accessToken = signAccess(user.id, user.role);
-    res.cookie('refreshToken', await createRefresh(user.id), COOKIE_OPTS);
+    res.cookie('refreshToken', await createRefresh(user.id), cookieOpts(req));
     res.json({
       accessToken,
       user: {
@@ -92,11 +98,11 @@ export async function refresh(req, res, next) {
       include: { user: true },
     });
     if (!stored || stored.expiresAt < new Date()) {
-      res.clearCookie('refreshToken', CLEAR_OPTS);
+      res.clearCookie('refreshToken', clearOpts(req));
       return res.status(401).json({ error: 'Refresh token expired' });
     }
     await prisma.refreshToken.delete({ where: { token } });
-    res.cookie('refreshToken', await createRefresh(stored.userId), COOKIE_OPTS);
+    res.cookie('refreshToken', await createRefresh(stored.userId), cookieOpts(req));
     res.json({ accessToken: signAccess(stored.userId, stored.user.role) });
   } catch (err) {
     next(err);
@@ -107,7 +113,7 @@ export async function logout(req, res, next) {
   try {
     const token = req.cookies.refreshToken;
     if (token) await prisma.refreshToken.deleteMany({ where: { token } });
-    res.clearCookie('refreshToken', CLEAR_OPTS);
+    res.clearCookie('refreshToken', clearOpts(req));
     res.json({ message: 'Logged out' });
   } catch (err) {
     next(err);
@@ -130,6 +136,6 @@ export async function getMe(req, res, next) {
 export async function googleCallback(req, res) {
   const user = req.user;
   const accessToken = signAccess(user.id, user.role);
-  res.cookie('refreshToken', await createRefresh(user.id), COOKIE_OPTS);
+  res.cookie('refreshToken', await createRefresh(user.id), cookieOpts(req));
   res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${accessToken}`);
 }
