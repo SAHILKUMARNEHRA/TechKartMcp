@@ -6,11 +6,12 @@ import { useCart } from '../context/CartContext.jsx';
 import { useCompare } from '../hooks/useCompare.js';
 import PriceHistoryChart from '../components/ui/PriceHistoryChart.jsx';
 import { LineSkeleton } from '../components/ui/LoadingSkeleton.jsx';
-import { formatINR } from '../components/ui/ProductCard.jsx';
+import ProductCard, { formatINR } from '../components/ui/ProductCard.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const { addItem } = useCart();
@@ -24,6 +25,19 @@ export default function ProductDetail() {
       .catch(() => setProduct(null))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Pull a few more products from the same category to show below.
+  useEffect(() => {
+    if (!product?.category) return;
+    api
+      .get('/products', { params: { category: product.category, limit: 5 } })
+      .then((res) =>
+        setRelated(
+          (res.data.products || []).filter((p) => p.id !== product.id).slice(0, 4)
+        )
+      )
+      .catch(() => setRelated([]));
+  }, [product?.category, product?.id]);
 
   if (loading) {
     return (
@@ -191,6 +205,25 @@ export default function ProductDetail() {
         <div className="mt-12">
           <PriceHistoryChart productId={product.id} />
         </div>
+
+        {related.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-xl font-semibold">You may also like</h2>
+              <Link
+                to={`/products?category=${product.category}`}
+                className="text-link text-sm capitalize"
+              >
+                More {product.category} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {related.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
