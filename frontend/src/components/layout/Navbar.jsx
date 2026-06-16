@@ -169,7 +169,7 @@ export default function Navbar() {
               onFocus={() => setSugOpen(true)}
               onKeyDown={onKeyDown}
               placeholder="Search"
-              className="glass-input !pl-9 !py-2 !text-sm"
+              className="glass-input !h-9 !pl-9 !py-0 !text-sm"
             />
           </div>
 
@@ -312,10 +312,16 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="hidden sm:flex items-center gap-1 ml-1">
-              <Link to="/login" className="text-[13px] px-3 py-1.5 text-ink-2 hover:text-ink">
+              <Link
+                to="/login"
+                className="h-9 inline-flex items-center px-3 text-[13px] text-ink-2 hover:text-ink transition-colors"
+              >
                 Sign in
               </Link>
-              <Link to="/register" className="glass-button-primary !py-1.5 !px-4 !text-[13px]">
+              <Link
+                to="/register"
+                className="glass-button-primary !h-9 !py-0 !px-4 !text-[13px]"
+              >
                 Sign up
               </Link>
             </div>
@@ -384,9 +390,5 @@ function DropLink({ to, icon, children, onClick }) {
 }
 
 function navLinkCls({ isActive }) {
-  return `nav-underline px-3 py-1.5 rounded-md transition-colors duration-200 ${
-    isActive
-      ? 'text-ink font-medium is-active'
-      : 'text-ink-2 hover:text-ink'
-  }`;
+  return `nav-link${isActive ? ' is-active' : ''}`;
 }
