@@ -22,7 +22,7 @@ import api from '../../services/api.js';
 import { formatINR } from '../ui/ProductCard.jsx';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const { theme, toggle: toggleTheme } = useTheme();
   const { count: wishlistCount } = useWishlist();
   const cartCount = useStore((s) => s.cartCount);
@@ -268,7 +268,9 @@ export default function Navbar() {
             )}
           </Link>
 
-          {user ? (
+          {authLoading ? (
+            <div className="w-9 h-9 rounded-full bg-surface-2 animate-pulse" />
+          ) : user ? (
             <div className="relative">
               <button
                 onClick={() => setProfileOpen((v) => !v)}

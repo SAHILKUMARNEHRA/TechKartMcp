@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Zap, Lock } from 'lucide-react';
+import { Zap, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Login() {
@@ -12,6 +12,7 @@ export default function Login() {
   const from = location.state?.from || '/';
   const [form, setForm] = useState({ email: '', password: '' });
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null); // { message, code }
 
   // Surface the reason the user was sent here (e.g. tried to add to cart).
   useEffect(() => {
@@ -21,12 +22,20 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setBusy(true);
+    setError(null);
     try {
       await login(form.email, form.password);
       toast.success('Welcome back!');
       navigate(from, { replace: true });
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Login failed');
+      const data = err.response?.data;
+      const message =
+        data?.error ||
+        (err.response?.status >= 500
+          ? 'Server error — please try again in a moment.'
+          : 'Could not sign you in. Please try again.');
+      setError({ message, code: data?.code });
+      toast.error(message);
     } finally {
       setBusy(false);
     }
@@ -45,10 +54,28 @@ export default function Login() {
           <p className="text-sm text-muted">Sign in to your TechKart account</p>
         </div>
 
-        {redirectMessage && (
+        {redirectMessage && !error && (
           <div className="flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
             <Lock size={16} className="shrink-0" />
             <span>{redirectMessage} to continue.</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-start gap-2 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            <div>
+              <p>{error.message}</p>
+              {error.code === 'NO_ACCOUNT' && (
+                <Link
+                  to="/register"
+                  state={{ email: form.email }}
+                  className="inline-block mt-1 font-medium underline"
+                >
+                  Create an account →
+                </Link>
+              )}
+            </div>
           </div>
         )}
 

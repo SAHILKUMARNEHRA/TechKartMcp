@@ -12,8 +12,12 @@ export function AuthProvider({ children }) {
       try {
         const { data } = await api.post('/auth/refresh');
         setAccessToken(data.accessToken);
-        const me = await api.get('/auth/me');
-        setUser(me.data.user);
+        if (data.user) {
+          setUser(data.user);
+        } else {
+          const me = await api.get('/auth/me');
+          setUser(me.data.user);
+        }
       } catch {
         setUser(null);
       } finally {

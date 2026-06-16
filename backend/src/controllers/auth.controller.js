@@ -69,9 +69,25 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
   try {
     const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ error: 'Email and password are required.', code: 'MISSING_FIELDS' });
+
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user?.passwordHash || !(await bcrypt.compare(password, user.passwordHash)))
-      return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user)
+      return res.status(404).json({
+        error: "No account found with this email. Please create an account first.",
+        code: 'NO_ACCOUNT',
+      });
+    if (!user.passwordHash)
+      return res.status(400).json({
+        error: 'This email is registered with Google. Use "Continue with Google" to sign in.',
+        code: 'OAUTH_ONLY',
+      });
+    if (!(await bcrypt.compare(password, user.passwordHash)))
+      return res.status(401).json({
+        error: 'Incorrect password. Please try again.',
+        code: 'BAD_PASSWORD',
+      });
     const accessToken = signAccess(user.id, user.role);
     res.cookie('refreshToken', await createRefresh(user.id), cookieOpts(req));
     res.json({
@@ -103,7 +119,16 @@ export async function refresh(req, res, next) {
     }
     await prisma.refreshToken.delete({ where: { token } });
     res.cookie('refreshToken', await createRefresh(stored.userId), cookieOpts(req));
-    res.json({ accessToken: signAccess(stored.userId, stored.user.role) });
+    res.json({
+      accessToken: signAccess(stored.userId, stored.user.role),
+      user: {
+        id: stored.user.id,
+        email: stored.user.email,
+        name: stored.user.name,
+        role: stored.user.role,
+        avatar: stored.user.avatar,
+      },
+    });
   } catch (err) {
     next(err);
   }
