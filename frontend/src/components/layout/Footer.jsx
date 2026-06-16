@@ -10,7 +10,7 @@ export default function Footer() {
             TechKart
           </Link>
           <p className="text-sm text-muted max-w-xs leading-relaxed">
-            Tech, considered. AI-guided discovery, real-time price tracking, and one-tap
+            Tech, considered. Smart discovery, real-time price tracking, and one-tap
             ordering for the things you'll actually use.
           </p>
           <div className="flex gap-2 mt-1">

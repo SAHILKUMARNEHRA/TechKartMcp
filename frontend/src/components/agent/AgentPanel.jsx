@@ -63,7 +63,7 @@ const QUICK_PROMPTS = [
 const GREETING = {
   role: 'assistant',
   content:
-    "Hi! I'm your TechKart AI assistant ⚡ Tell me what you're shopping for and I'll find the best products, check price trends, and help you order.",
+    "Hi! I'm your TechKart assistant ⚡ Tell me what you're shopping for and I'll find the best products, check price trends, and help you order.",
 };
 
 export default function AgentPanel() {
@@ -117,7 +117,7 @@ export default function AgentPanel() {
       const errMsg =
         err.response?.status === 503
           ? err.response.data.error
-          : err.response?.data?.error || 'Something went wrong talking to the AI.';
+          : err.response?.data?.error || 'Something went wrong talking to the assistant.';
       setMessages((m) => [
         ...m,
         { role: 'assistant', content: `⚠️ ${errMsg}`, error: true },
@@ -164,11 +164,11 @@ export default function AgentPanel() {
                 </span>
                 <div>
                   <div className="font-medium flex items-center gap-1.5">
-                    AI Shopping Assistant
+                    Shopping Assistant
                     <Sparkles size={12} className="text-accent" />
                   </div>
                   <div className="text-xs text-faint">
-                    Groq · Llama 3.3 70B · MCP-powered
+                    Powered by MCP · TechKart
                   </div>
                 </div>
               </div>

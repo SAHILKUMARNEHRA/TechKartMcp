@@ -6,7 +6,7 @@ export async function getProducts(req, res, next) {
     const where = {};
     if (q) {
       // Match generic type words (e.g. "smartphone", "headphones") as well as
-      // titles/brands by also searching category and tags. Keeps the AI agent
+      // titles/brands by also searching category and tags. Keeps the assistant
       // from wrongly falling back when it searches by a type word.
       const term = String(q).trim();
       const tagTerm = term.toLowerCase().replace(/s$/, '');

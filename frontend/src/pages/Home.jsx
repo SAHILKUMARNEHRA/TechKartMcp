@@ -63,7 +63,7 @@ export default function Home() {
             className="max-w-3xl"
           >
             <motion.span variants={fadeUp} className="eyebrow inline-flex items-center gap-1.5">
-              <Sparkles size={12} /> AI-guided tech shopping
+              <Sparkles size={12} /> Smart tech shopping
             </motion.span>
             <motion.h1 variants={fadeUp} className="mt-4 hero-title">
               Tech, <span className="gradient-text">considered.</span>
@@ -72,7 +72,7 @@ export default function Home() {
               variants={fadeUp}
               className="mt-5 text-lg text-ink-2 max-w-md leading-relaxed"
             >
-              A curated catalog of the best tech — with an AI that knows the
+              A curated catalog of the best tech — with smart guidance on the
               right time to buy.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
@@ -151,7 +151,7 @@ export default function Home() {
           <Feature
             index={0}
             icon={<Bot size={20} strokeWidth={1.6} />}
-            kicker="AI assistant"
+            kicker="Smart assistant"
             title="A real conversation."
             text="Tell our assistant what you want. It finds, compares, and even places the order — with your approval at every step."
           />

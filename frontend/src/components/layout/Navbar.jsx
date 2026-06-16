@@ -229,8 +229,8 @@ export default function Navbar() {
 
           <button
             onClick={toggleAgent}
-            aria-label="AI shopping agent"
-            title="AI shopping agent"
+            aria-label="Shopping assistant"
+            title="Shopping assistant"
             className="w-9 h-9 rounded-full flex items-center justify-center bg-accent text-white agent-pulse"
           >
             <Bot size={16} />

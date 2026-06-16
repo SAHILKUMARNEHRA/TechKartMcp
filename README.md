@@ -1,6 +1,6 @@
 # TechKart — The Future of Tech Shopping
 
-A complete production-ready fullstack tech e-commerce platform with an AI shopping agent.
+A complete production-ready fullstack tech e-commerce platform with a smart shopping assistant.
 
 **Stack:** React 18 + Vite + Zustand + Framer Motion + Tailwind · Node 20 + Express (ESM) · PostgreSQL + Prisma · JWT + Google OAuth · MCP Server (`@modelcontextprotocol/sdk`)
 
@@ -12,7 +12,7 @@ A complete production-ready fullstack tech e-commerce platform with an AI shoppi
 techkart/
 ├── backend/      Express API + Prisma + JWT auth + product sync
 ├── frontend/     React SPA with glass/water UI, Zustand, Recharts
-├── mcp-server/   AI agent over the backend (stdio MCP)
+├── mcp-server/   Shopping assistant over the backend (stdio MCP)
 └── README.md
 ```
 
@@ -57,7 +57,7 @@ npm install
 npm run dev                # http://localhost:5173
 ```
 
-### 5. MCP Server (optional — for AI-driven ordering via any MCP-compatible client)
+### 5. MCP Server (optional — for assistant-driven ordering via any MCP-compatible client)
 
 ```bash
 cd mcp-server
@@ -79,7 +79,7 @@ Register it in your MCP client by pointing the
 | Products | Search, filters, sort, pagination, categories, 90-day price history, compare |
 | Cart | Per-user persistent cart, stock validation, qty controls |
 | Orders | COD/UPI/Card flow, address validation, agent-placed flag, cancellation |
-| AI Agent | MCP tools: `search_products`, `get_price_history`, `compare_products`, `view_cart`, `add_to_cart`, `place_order` (confirmation-gated), `get_order_status` |
+| Shopping Assistant | MCP tools: `search_products`, `get_price_history`, `compare_products`, `view_cart`, `add_to_cart`, `place_order` (confirmation-gated), `get_order_status` |
 | UI | Glass/water aesthetic, Framer Motion reveals, Recharts price area, ripple buttons |
 
 ---

@@ -3,7 +3,7 @@ import { prisma } from '../config/database.js';
 // ─────────────────────────────────────────────────────────────
 // TechKart curated catalog
 // Real tech products spanning every budget band (₹1k → ₹2L) and
-// category, so the AI agent always has stock to recommend.
+// category, so the assistant always has stock to recommend.
 // Images are hotlink-friendly manufacturer / retailer CDN URLs.
 // ─────────────────────────────────────────────────────────────
 const SEEDED_PRODUCTS = [

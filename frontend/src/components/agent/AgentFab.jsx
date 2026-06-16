@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, Sparkles } from 'lucide-react';
 import { useStore } from '../../store/useStore.js';
 
-// Floating action button that opens the TechKart MCP AI agent.
+// Floating action button that opens the TechKart MCP shopping assistant.
 // Sits bottom-right, pulses to draw the eye, and expands to a pill on hover.
 export default function AgentFab() {
   const open = useStore((s) => s.agentOpen);
@@ -13,7 +13,7 @@ export default function AgentFab() {
       {!open && (
         <motion.button
           onClick={toggle}
-          aria-label="Open TechKart AI assistant"
+          aria-label="Open TechKart assistant"
           initial={{ scale: 0, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0, opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export default function AgentFab() {
               variants={{ hover: { width: 'auto', opacity: 1, marginLeft: 10 } }}
               initial={{ width: 0, opacity: 0, marginLeft: 0 }}
             >
-              Ask&nbsp;AI
+Assistant
             </motion.span>
 
             <Sparkles className="agent-fab-spark" size={13} aria-hidden="true" />

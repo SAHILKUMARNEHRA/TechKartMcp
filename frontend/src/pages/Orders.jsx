@@ -140,7 +140,7 @@ export default function Orders() {
                       <div className="text-xs text-faint uppercase tracking-wider">
                         Order #{o.id.slice(0, 8)}
                         {o.placedByAgent && (
-                          <span className="ml-2 text-accent">· Placed by AI Agent</span>
+                          <span className="ml-2 text-accent">· Placed by Assistant</span>
                         )}
                       </div>
                       <div className="text-sm text-muted mt-0.5">

@@ -14,7 +14,7 @@ const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || 'llama-3.1-8b-instant';
 const MAX_ITERATIONS = 5;
 
-const SYSTEM_PROMPT = `You are TechKart's AI Shopping Assistant — a friendly, concise expert helping Indian customers shop for tech.
+const SYSTEM_PROMPT = `You are TechKart's Shopping Assistant — a friendly, concise expert helping Indian customers shop for tech.
 
 # Behavior
 - All prices are in Indian Rupees (₹). 1 lakh = 100000, 1 crore = 10000000.

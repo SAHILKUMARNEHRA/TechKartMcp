@@ -29,7 +29,7 @@ export async function postChat(req, res, next) {
     if (err.message?.includes('GROQ_API_KEY')) {
       return res.status(503).json({
         error:
-          'AI service not configured. Set GROQ_API_KEY in backend .env, then restart.',
+          'Assistant service not configured. Set GROQ_API_KEY in backend .env, then restart.',
       });
     }
     const code = err?.error?.error?.code || err?.code;
@@ -37,9 +37,9 @@ export async function postChat(req, res, next) {
       const upstream = err?.error?.error?.message || '';
       const retry = upstream.match(/try again in ([0-9hms.]+)/i)?.[1];
       return res.status(429).json({
-        error: `AI is taking a quick break — daily free-tier limit reached${
+        error: `The assistant is taking a quick break — daily limit reached${
           retry ? ` (resets in ~${retry})` : ''
-        }. Browse products manually for now, or upgrade your Groq plan.`,
+        }. Browse products manually for now and try again soon.`,
       });
     }
     console.error('[Agent] chat error:', err);
