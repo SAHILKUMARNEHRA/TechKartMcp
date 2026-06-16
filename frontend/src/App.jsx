@@ -15,6 +15,7 @@ import Navbar from './components/layout/Navbar.jsx';
 import Footer from './components/layout/Footer.jsx';
 import CompareBar from './components/ui/CompareBar.jsx';
 import AgentPanel from './components/agent/AgentPanel.jsx';
+import AgentFab from './components/agent/AgentFab.jsx';
 
 // Route-level code splitting — keeps the initial bundle small and pages load
 // on demand. Home stays eager since it's the most common entry point.
@@ -101,6 +102,7 @@ export default function App() {
               <Footer />
               <CompareBar />
               <AgentPanel />
+              <AgentFab />
             </div>
             <Toaster
               position="bottom-right"

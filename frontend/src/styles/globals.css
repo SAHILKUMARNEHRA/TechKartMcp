@@ -235,13 +235,27 @@ h3,
   --accent-2: #9d8bff;
 }
 
-/* Tasteful gradient headline (blue → violet, within the theme) */
+/* Tasteful gradient headline (blue → violet) with a slow shimmer sweep */
 .gradient-text {
-  background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+  background: linear-gradient(
+    100deg,
+    var(--accent) 0%,
+    var(--accent-2) 35%,
+    #18c2c2 55%,
+    var(--accent-2) 70%,
+    var(--accent) 100%
+  );
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  animation: textShimmer 7s linear infinite;
+}
+@keyframes textShimmer {
+  to {
+    background-position: 220% 0;
+  }
 }
 
 /* Animated aurora glow used behind the hero */

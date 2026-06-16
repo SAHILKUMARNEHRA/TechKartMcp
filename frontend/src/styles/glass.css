@@ -90,6 +90,80 @@
   );
 }
 
+/* ──────────────────────────────────────────────────────────
+   Floating AI agent button (FAB)
+   ────────────────────────────────────────────────────────── */
+.agent-fab {
+  -webkit-tap-highlight-color: transparent;
+}
+.agent-fab-core {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  box-shadow:
+    0 12px 30px -8px var(--accent-ring),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+.agent-fab-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.agent-fab-label {
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.agent-fab-spark {
+  position: absolute;
+  top: 7px;
+  right: 12px;
+  color: #fff;
+  animation: fabSpark 2.2s ease-in-out infinite;
+}
+/* expanding halo rings */
+.agent-fab-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  animation: fabPulse 2.4s var(--ease-out) infinite;
+}
+.agent-fab-ring-2 {
+  animation-delay: 1.2s;
+}
+@keyframes fabPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes fabSpark {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
+  }
+}
+
 /* Frosted glass surface for product cards (lighter than the nav so it
    stays smooth across a full grid). */
 .glass-tile {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   Search,
   ShoppingBag,
@@ -141,13 +142,7 @@ export default function Navbar() {
           <span className="font-display tracking-tight">TechKart</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1 text-[13px]">
-          <NavLink to="/products" className={navLinkCls}>Shop</NavLink>
-          <NavLink to="/products?category=laptops" className={navLinkCls}>Mac</NavLink>
-          <NavLink to="/products?category=smartphones" className={navLinkCls}>Phone</NavLink>
-          <NavLink to="/products?category=audio" className={navLinkCls}>Audio</NavLink>
-          <NavLink to="/compare" className={navLinkCls}>Compare</NavLink>
-        </nav>
+        <DockNav />
 
         <form
           ref={searchBoxRef}
@@ -391,4 +386,48 @@ function DropLink({ to, icon, children, onClick }) {
 
 function navLinkCls({ isActive }) {
   return `nav-link${isActive ? ' is-active' : ''}`;
+}
+
+const NAV_ITEMS = [
+  { to: '/products', label: 'Shop' },
+  { to: '/products?category=laptops', label: 'Mac' },
+  { to: '/products?category=smartphones', label: 'Phone' },
+  { to: '/products?category=audio', label: 'Audio' },
+  { to: '/compare', label: 'Compare' },
+];
+
+// macOS-dock-style nav: items magnify based on proximity to the cursor.
+function DockNav() {
+  const mouseX = useMotionValue(Infinity);
+  return (
+    <nav
+      onMouseMove={(e) => mouseX.set(e.clientX)}
+      onMouseLeave={() => mouseX.set(Infinity)}
+      className="hidden md:flex items-center gap-0.5"
+    >
+      {NAV_ITEMS.map((item) => (
+        <DockLink key={item.to} mouseX={mouseX} {...item} />
+      ))}
+    </nav>
+  );
+}
+
+function DockLink({ mouseX, to, label }) {
+  const ref = useRef(null);
+  const distance = useTransform(mouseX, (val) => {
+    const b = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+    return val - b.x - b.width / 2;
+  });
+  const scaleSync = useTransform(distance, [-110, 0, 110], [1, 1.22, 1]);
+  const ySync = useTransform(distance, [-110, 0, 110], [0, -2, 0]);
+  const spring = { stiffness: 350, damping: 22, mass: 0.4 };
+  const scale = useSpring(scaleSync, spring);
+  const y = useSpring(ySync, spring);
+  return (
+    <motion.div ref={ref} style={{ scale, y }} className="origin-center">
+      <NavLink to={to} className={navLinkCls}>
+        {label}
+      </NavLink>
+    </motion.div>
+  );
 }
