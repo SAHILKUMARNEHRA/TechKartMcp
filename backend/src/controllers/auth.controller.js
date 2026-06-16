@@ -3,11 +3,23 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../config/database.js';
 
+const isProd = process.env.NODE_ENV === 'production';
+// Frontend (Vercel) and backend (Render) live on different domains, so the
+// refresh cookie must be SameSite=None + Secure to be sent cross-site.
+// In local dev (same-origin via Vite proxy, http) fall back to Lax.
 const COOKIE_OPTS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  secure: isProd,
+  sameSite: isProd ? 'none' : 'lax',
+  path: '/',
   maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+// Same attributes (minus maxAge) so clearCookie reliably matches & removes it.
+const CLEAR_OPTS = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? 'none' : 'lax',
+  path: '/',
 };
 
 const signAccess = (id, role) =>
@@ -80,7 +92,7 @@ export async function refresh(req, res, next) {
       include: { user: true },
     });
     if (!stored || stored.expiresAt < new Date()) {
-      res.clearCookie('refreshToken');
+      res.clearCookie('refreshToken', CLEAR_OPTS);
       return res.status(401).json({ error: 'Refresh token expired' });
     }
     await prisma.refreshToken.delete({ where: { token } });
@@ -95,7 +107,7 @@ export async function logout(req, res, next) {
   try {
     const token = req.cookies.refreshToken;
     if (token) await prisma.refreshToken.deleteMany({ where: { token } });
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', CLEAR_OPTS);
     res.json({ message: 'Logged out' });
   } catch (err) {
     next(err);
